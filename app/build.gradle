@@ -1,33 +1,35 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
-        applicationId "me.kevingleason.androidrtc"
-        minSdkVersion 17
-        targetSdkVersion 21
+        applicationId "me.pntutorial.pnrtcblog"
+        minSdkVersion 15
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
     }
 }
 
-repositories {
-    flatDir {
-        dirs 'libs'
-    }
-}
-
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.pubnub:pubnub-android:3.7.4'
-    compile 'io.pristine:libjingle:9694@aar'
-    compile project(':pnwebrtc')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'io.pristine:libjingle:11139@aar'
+//    implementation 'io.pristine:libjingle:9694@aar'
+//    implementation files('src/main/jniLibs/autobanh.jar')
+//    implementation files('src/main/jniLibs/base_java.jar')
+//    implementation files('src/main/jniLibs/libjingle_peerconnection.jar')
+    implementation 'com.pubnub:pubnub-android:3.7.4'
+    implementation 'me.kevingleason:pnwebrtc:1.0.6@aar'
+    implementation 'pub.devrel:easypermissions:1.1.3'
 }

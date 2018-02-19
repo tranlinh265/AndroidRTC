@@ -27,12 +27,19 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:textSize="25sp"
+        android:gravity="center"
+        android:text="@string/make_call"
+        android:layout_margin="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft  ="@dimen/activity_horizontal_margin"
         android:paddingRight ="@dimen/activity_horizontal_margin"
-        android:paddingTop   ="10dp"
         android:paddingBottom="10dp"
         android:orientation="horizontal">
         <EditText
@@ -65,20 +72,20 @@
         android:layout_height="3dp"
         android:background="@drawable/light_fade_down"/>
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-    <TextView
-        android:id="@android:id/empty"
-        android:background="@color/grey"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/no_call_history"
-        />
+    <ToggleButton
+        android:id="@+id/camera_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textOn="Back camera"
+        android:textOff="Front Camera"/>
 
+    <TextView
+        android:textSize="25sp"
+        android:gravity="center"
+        android:text="@string/receive_call"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey"/>
 
 </LinearLayout>
