@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import me.kevingleason.androidrtc.servers.XirSysRequest;
+//import me.kevingleason.androidrtc.servers.XirSysRequest;
 import me.kevingleason.androidrtc.util.Constants;
 import me.kevingleason.androidrtc.util.LogRTCListener;
 import me.kevingleason.pnwebrtc.PnPeer;
@@ -57,15 +57,24 @@ public class VideoCallActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_video);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         this.videoView = (GLSurfaceView)findViewById(R.id.gl_surface);
-        initView();
-    }
-    private void initView(){
+        VideoRendererGui.setView(videoView, null);
         ibtnEndCall = (ImageButton)findViewById(R.id.ibtn_end);
         ibtnEndCall.setOnClickListener(this);
 
         Bundle extras = getIntent().getExtras();
-
         this.username = extras.getString(Constants.USER_NAME, "");
+
+        this.pnRTCClient = new PnRTCClient(Constants.PUB_KEY, Constants.SUB_KEY, this.username);
+
+        initView();
+    }
+
+
+    private void initView(){
+
+
+        Bundle extras = getIntent().getExtras();
+
 
         PeerConnectionFactory.initializeAndroidGlobals(this,
                 true, //Audio enabled
@@ -73,7 +82,6 @@ public class VideoCallActivity extends Activity implements View.OnClickListener{
                 true,// hardware acceleration enable
                 null );
         PeerConnectionFactory pcFactory = new PeerConnectionFactory();
-        this.pnRTCClient = new PnRTCClient(Constants.PUB_KEY, Constants.SUB_KEY, this.username);
 
         List<PeerConnection.IceServer> servers = getxirSysIceServer();
 
@@ -90,9 +98,6 @@ public class VideoCallActivity extends Activity implements View.OnClickListener{
 
         AudioSource audioSource = pcFactory.createAudioSource(this.pnRTCClient.audioConstraints());
         AudioTrack localAudioTrack = pcFactory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
-
-
-        VideoRendererGui.setView(videoView, null);
 
         remoteRender = VideoRendererGui.create(0,0,100,100,VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, false);
         localRender = VideoRendererGui.create(0,0,100,100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL,true);
@@ -114,21 +119,33 @@ public class VideoCallActivity extends Activity implements View.OnClickListener{
     }
 
     private void connectToUser(String user, boolean dialed){
-        this.pnRTCClient.connect(user,dialed);
+        this.pnRTCClient.connect(user);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        this.videoView.onPause();
-        this.localVideoSource.stop();
+//        this.videoView.onPause();
+        try{this.videoView.onPause();}
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        if(this.localVideoSource != null){
+            this.localVideoSource.stop();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.videoView.onResume();
-        this.localVideoSource.restart();
+        try{this.videoView.onResume();}
+        catch (Exception e){
+            e.printStackTrace();
+        }
+//        this.videoView.onResume();
+        if(this.localVideoSource != null){
+            this.localVideoSource.restart();
+        }
     }
 
     @Override
@@ -144,17 +161,19 @@ public class VideoCallActivity extends Activity implements View.OnClickListener{
 
     private List<PeerConnection.IceServer> getxirSysIceServer(){
         List<PeerConnection.IceServer> servers = new ArrayList<>();
-        try{
-            servers = new XirSysRequest().execute().get();
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }catch (ExecutionException e){
-            e.printStackTrace();
-        }
+//        try{
+//            servers = new XirSysRequest().execute().get();
+//        }catch (InterruptedException e){
+//            e.printStackTrace();
+//        }catch (ExecutionException e){
+//            e.printStackTrace();
+//        }
         return servers;
     }
     private void hangup(){
-        this.pnRTCClient.closeAllConnections();
+        if (this.pnRTCClient != null){
+            this.pnRTCClient.closeAllConnections();
+        }
         endCall();
     }
 
@@ -169,6 +188,9 @@ public class VideoCallActivity extends Activity implements View.OnClickListener{
                 hangup();
                 break;
         }
+    }
+
+    private void requestCameraPermission(){
     }
 
     private class MyLogRTCListener extends LogRTCListener{
@@ -212,5 +234,4 @@ public class VideoCallActivity extends Activity implements View.OnClickListener{
             finish();
         }
     }
-
 }
