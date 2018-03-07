@@ -11,5 +11,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_end_call"
-        android:id="@+id/ibtn_end_call"/>
+        android:id="@+id/ibtn_end"/>
 </RelativeLayout>

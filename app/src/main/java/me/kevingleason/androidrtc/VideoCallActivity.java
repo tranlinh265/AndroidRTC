@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -37,7 +36,7 @@ import me.kevingleason.pnwebrtc.PnSignalingParams;
  * Created by linhtm on 3/7/2018.
  */
 
-public class ActivityVideo extends Activity implements View.OnClickListener{
+public class VideoCallActivity extends Activity implements View.OnClickListener{
     public static final String VIDEO_TRACK_ID = "videoPN";
     public static final String AUDIO_TRACK_ID = "audioPN";
     public static final String LOCAL_MEDIA_STREAM_ID = "localStreamPN";
@@ -57,8 +56,11 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        ibtnEndCall = (ImageButton)findViewById(R.id.ibtn_end_call);
+        this.videoView = (GLSurfaceView)findViewById(R.id.gl_surface);
+        initView();
+    }
+    private void initView(){
+        ibtnEndCall = (ImageButton)findViewById(R.id.ibtn_end);
         ibtnEndCall.setOnClickListener(this);
 
         Bundle extras = getIntent().getExtras();
@@ -66,7 +68,7 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         this.username = extras.getString(Constants.USER_NAME, "");
 
         PeerConnectionFactory.initializeAndroidGlobals(this,
-                false, //Audio enabled
+                true, //Audio enabled
                 true,// video enabled
                 true,// hardware acceleration enable
                 null );
@@ -89,7 +91,6 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         AudioSource audioSource = pcFactory.createAudioSource(this.pnRTCClient.audioConstraints());
         AudioTrack localAudioTrack = pcFactory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
 
-        this.videoView = (GLSurfaceView)findViewById(R.id.gl_surface);
 
         VideoRendererGui.setView(videoView, null);
 
@@ -109,7 +110,7 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         this.pnRTCClient.setMaxConnections(1);
 
         String callUser = extras.getString(Constants.CALL_USER, "");
-//        connectToUser(callUser, extras.getBoolean("dialed"));
+        connectToUser(callUser, extras.getBoolean("dialed"));
     }
 
     private void connectToUser(String user, boolean dialed){
@@ -152,10 +153,20 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         }
         return servers;
     }
+    private void hangup(){
+        this.pnRTCClient.closeAllConnections();
+        endCall();
+    }
+
+    private void endCall(){
+        startActivity(new Intent(VideoCallActivity.this, MainActivity.class));
+        finish();
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.ibtn_end_call:
+            case R.id.ibtn_end:
+                hangup();
                 break;
         }
     }
@@ -164,7 +175,7 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         @Override
         public void onLocalStream(final MediaStream localStream) {
             super.onLocalStream(localStream);
-            ActivityVideo.this.runOnUiThread(new Runnable() {
+            VideoCallActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if(localStream.videoTracks.size() == 0)return;
@@ -176,13 +187,13 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         @Override
         public void onAddRemoteStream(final MediaStream remoteStream, final PnPeer peer) {
             super.onAddRemoteStream(remoteStream, peer);
-            ActivityVideo.this.runOnUiThread(new Runnable() {
+            VideoCallActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(ActivityVideo.this,"Connected to " + peer.getId(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(VideoCallActivity.this,"Connected to " + peer.getId(),Toast.LENGTH_LONG).show();
                     try{
-                        if(remoteStream.videoTracks.size() == 0) return;
-//                        if(remoteStream.audioTracks.size() == 0 || remoteStream.videoTracks.size() == 0) return;
+//                        if(remoteStream.videoTracks.size() == 0) return;
+                        if(remoteStream.audioTracks.size() == 0 || remoteStream.videoTracks.size() == 0) return;
                         remoteStream.videoTracks.get(0).addRenderer(new VideoRenderer(remoteRender));
                         VideoRendererGui.update(remoteRender, 0,0,100,100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL,false);
                         VideoRendererGui.update(localRender,72,65,25,25,VideoRendererGui.ScalingType.SCALE_ASPECT_FIT,true);
@@ -196,9 +207,10 @@ public class ActivityVideo extends Activity implements View.OnClickListener{
         @Override
         public void onPeerConnectionClosed(PnPeer peer) {
             super.onPeerConnectionClosed(peer);
-            Intent intent = new Intent(ActivityVideo.this, HomeActivity.class);
+            Intent intent = new Intent(VideoCallActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
     }
+
 }

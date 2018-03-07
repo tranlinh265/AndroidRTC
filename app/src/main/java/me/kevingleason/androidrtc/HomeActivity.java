@@ -25,7 +25,7 @@ public class HomeActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_activity_main);
+        setContentView(R.layout.activity_home);
         this.username = getString(R.string.user_2);
         this.otherUsername = getString(R.string.user_1);
         tvUsername = (TextView) findViewById(R.id.tv_username);
@@ -61,7 +61,7 @@ public class HomeActivity extends Activity implements View.OnClickListener{
                 edit.putString(Constants.USER_NAME, username);
                 edit.putString(Constants.OTHER_USER_NAME,otherUsername);
                 edit.apply();
-                Intent intent = new Intent(this,ActivityMain.class);
+                Intent intent = new Intent(this,MainActivity.class);
                 startActivity(intent);
                 break;
         }

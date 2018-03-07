@@ -26,11 +26,8 @@
         android:icon="@drawable/ic_pubrtc"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="me.kevingleason.androidrtc.MainActivity">
-
-        </activity>
-        <activity android:name=".ActivityMain"/>
-        <activity android:name=".ActivityInComingCall"/>
+        <activity android:name="me.kevingleason.androidrtc.MainActivity"/>
+        <activity android:name="me.kevingleason.androidrtc.IncomingCallActivity"/>
 
         <activity
             android:name="me.kevingleason.androidrtc.HomeActivity"
@@ -42,23 +39,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="me.kevingleason.androidrtc.ActivityVideo"
-            android:label="@string/title_activity_video_chat"
-            android:parentActivityName="me.kevingleason.androidrtc.ActivityMain"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="me.kevingleason.androidrtc.ActivityMain" />
+            android:name="me.kevingleason.androidrtc.VideoCallActivity"
+            android:label="@string/title_activity_video_chat">
         </activity>
-        <activity
-            android:name="me.kevingleason.androidrtc.IncomingCallActivity"
-            android:label="@string/title_activity_incoming_call">
-        </activity>
-        <activity
-            android:name="me.kevingleason.androidrtc.LoginActivity"
-            android:label="@string/title_activity_login" >
-        </activity>
+
     </application>
 
 </manifest>
