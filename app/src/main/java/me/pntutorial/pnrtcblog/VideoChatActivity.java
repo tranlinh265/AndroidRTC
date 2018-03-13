@@ -1,5 +1,6 @@
 package me.pntutorial.pnrtcblog;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaRecorder;
@@ -8,9 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-
-
+import org.w3c.dom.Text;
 import org.webrtc.CameraEnumerationAndroid;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnectionFactory;
@@ -44,6 +46,9 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
     private VideoRenderer.Callbacks remoteRender;
     private GLSurfaceView mVideoView;
 
+    private RelativeLayout rlToastBar;
+    private TextView tvToast;
+
     private String username;
     private boolean webRtcInitialized;
 
@@ -51,6 +56,9 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_chat);
+
+        rlToastBar = (RelativeLayout)findViewById(R.id.rl_toast_bar);
+        tvToast = (TextView) findViewById(R.id.tv_toast);
 
         Log.i(Constants.LOG_TAG, "onCreate");
 
@@ -73,6 +81,32 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
         preInitWebRTCResource();
     }
 
+    private void showToast(String text){
+        tvToast.setText(text);
+        rlToastBar.setVisibility(View.VISIBLE);
+        rlToastBar.animate().setStartDelay(500).translationY(-(int) getResources().getDimension(R.dimen.height_bottom_bar)).setDuration(400)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        rlToastBar.animate().translationY(0).setStartDelay(400).setDuration(400).start();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                }).start();
+    }
     @AfterPermissionGranted(RC_CAMERA_AND_RECORD_AUDIO)
     private void preInitWebRTCResource() {
         String[] perms = { android.Manifest.permission.CAMERA };
@@ -172,12 +206,11 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
         webRtcInitialized = true;
 
         // If Constants.CALL_USER is in the intent extras, auto-connect them.
-        if (extras.containsKey(Constants.CALL_USER)) {
+        boolean dialed = extras.getBoolean("dialed", false);
+
+        if (extras.containsKey(Constants.CALL_USER) && !dialed) {
             String callUser = extras.getString(Constants.CALL_USER, "");
-            boolean dialed = extras.getBoolean("dialed", false);
-            if(dialed){
-                connectToUser(callUser);
-            }
+            connectToUser(callUser);
         }
     }
 
@@ -230,7 +263,8 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
             VideoChatActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(VideoChatActivity.this,"Connected to " + peer.getId(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(VideoChatActivity.this,"Connected to " + peer.getId(), Toast.LENGTH_SHORT).show();
+                    showToast(String.valueOf("Connected to " + peer.getId()));
                     try {
                         if (remoteStream.videoTracks.size() == 0) return;
 //                        if(remoteStream.audioTracks.size() == 0 || remoteStream.videoTracks.size() == 0) return;

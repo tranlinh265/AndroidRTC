@@ -27,13 +27,6 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:textSize="25sp"
-        android:gravity="center"
-        android:text="@string/make_call"
-        android:layout_margin="25dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,10 +60,6 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@drawable/light_fade_down"/>
 
     <ToggleButton
         android:id="@+id/camera_mode"
@@ -79,13 +68,5 @@
         android:layout_gravity="center_horizontal"
         android:textOn="Back camera"
         android:textOff="Front Camera"/>
-
-    <TextView
-        android:textSize="25sp"
-        android:gravity="center"
-        android:text="@string/receive_call"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/grey"/>
 
 </LinearLayout>

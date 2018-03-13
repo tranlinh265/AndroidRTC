@@ -116,7 +116,7 @@ public class MainActivity extends Activity {
                         if (!jsonMsg.has(Constants.JSON_CALL_USER)) return;
                         String user = jsonMsg.getString(Constants.JSON_CALL_USER);
                         // Consider Accept/Reject call here
-                        Intent intent = new Intent(MainActivity.this, VideoChatActivity.class);
+                        Intent intent = new Intent(MainActivity.this, IncomingCallActivity.class);
                         intent.putExtra(Constants.USER_NAME, username);
                         intent.putExtra(Constants.JSON_CALL_USER, user);
                         intent.putExtra(Constants.CALL_USER,user);
