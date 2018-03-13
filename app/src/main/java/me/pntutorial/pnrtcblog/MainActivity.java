@@ -119,6 +119,7 @@ public class MainActivity extends Activity {
                         Intent intent = new Intent(MainActivity.this, VideoChatActivity.class);
                         intent.putExtra(Constants.USER_NAME, username);
                         intent.putExtra(Constants.JSON_CALL_USER, user);
+                        intent.putExtra(Constants.CALL_USER,user);
                         intent.putExtra(Constants.CAMERA_MODE, mCameraModeToggle.isChecked() ?
                                 Constants.CAMERA_MODE_BACK : Constants.CAMERA_MODE_FRONT);
                         startActivity(intent);
@@ -155,6 +156,7 @@ public class MainActivity extends Activity {
                     intent.putExtra(Constants.CALL_USER, callNum);
                     intent.putExtra(Constants.CAMERA_MODE, mCameraModeToggle.isChecked() ?
                             Constants.CAMERA_MODE_FRONT : Constants.CAMERA_MODE_BACK);
+                    intent.putExtra("dialed", true);
                     startActivity(intent);
                 }
             });

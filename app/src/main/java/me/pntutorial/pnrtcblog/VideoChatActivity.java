@@ -174,7 +174,10 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
         // If Constants.CALL_USER is in the intent extras, auto-connect them.
         if (extras.containsKey(Constants.CALL_USER)) {
             String callUser = extras.getString(Constants.CALL_USER, "");
-            connectToUser(callUser);
+            boolean dialed = extras.getBoolean("dialed", false);
+            if(dialed){
+                connectToUser(callUser);
+            }
         }
     }
 
@@ -230,6 +233,8 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
                     Toast.makeText(VideoChatActivity.this,"Connected to " + peer.getId(), Toast.LENGTH_SHORT).show();
                     try {
                         if (remoteStream.videoTracks.size() == 0) return;
+//                        if(remoteStream.audioTracks.size() == 0 || remoteStream.videoTracks.size() == 0) return;
+
                         Log.i(Constants.LOG_TAG, "onAddRemoteStream:: addRenderer");
                         remoteStream.videoTracks.get(0).addRenderer(new VideoRenderer(remoteRender));
                         VideoRendererGui.update(remoteRender, 0, 0, 100, 100, RendererCommon.ScalingType.SCALE_ASPECT_FILL, false);
@@ -254,8 +259,12 @@ public class VideoChatActivity extends Activity implements EasyPermissions.Permi
 
         @Override
         public void onPeerConnectionClosed(PnPeer peer) {
-            Log.i(Constants.LOG_TAG, "onAddRemoteStream");
+            Log.i(Constants.LOG_TAG, "closed");
+            Intent intent = new Intent(VideoChatActivity.this,MainActivity.class);
+            startActivity(intent);
             finish();
         }
+
+
     }
 }
